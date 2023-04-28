@@ -4,10 +4,10 @@ import { createBackendResources } from './backend';
 import { createFrontendResources } from './frontend';
 
 export class IacStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props: cdk.StackProps) {
     super(scope, id, props);
 
-    createBackendResources(this);
+    createBackendResources(this, props);
     createFrontendResources(this);
   }
 }
