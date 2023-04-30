@@ -1,5 +1,13 @@
 @import './base.css';
 
+:root {
+  --blue-1: #60b9ce;
+  --blue-2: #38b2ce;
+  --blue-3: #04819e;
+  --blue-4: #206676;
+  --blue-5: #015367;
+}
+
 #app {
   max-width: 1280px;
   margin: 0 auto;
@@ -8,28 +16,14 @@
   font-weight: normal;
 }
 
-a,
-.green {
+a {
   text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
+  color: var(--blue-2);
   transition: 0.4s;
 }
 
 @media (hover: hover) {
   a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
-}
-
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+    background-color: var(--blue-3);
   }
 }
