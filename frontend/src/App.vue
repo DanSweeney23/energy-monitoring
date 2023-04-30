@@ -21,15 +21,30 @@ import { RouterLink, RouterView } from 'vue-router'
 <style>
 .container {
   display: grid;
-  grid-template-columns: 20% 20% 20% 20% 20%;
+  gap: 10px;
+  grid-template-columns: repeat(5, 1fr);
 }
 
-.container > * {
+@media screen and (max-width: 768px) {
+  .container {
+    display: inherit;
+  }
+
+  .container > * {
+    margin-bottom: 10px;
+  }
+}
+
+.container>* {
   background-color: #333;
   color: #fff;
   border-radius: 5px;
   padding: 10px;
-  margin: 10px;
+}
+
+.container>* h2 {
+  text-align: center;
+  border-bottom: #fff 1px solid;
 }
 
 .header-row {
@@ -38,7 +53,6 @@ import { RouterLink, RouterView } from 'vue-router'
   text-align: center;
   grid-column: 1 / 6;
   grid-row: 1;
-  font-size: 1.2rem;
 }
 
 h1 {

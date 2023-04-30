@@ -15,7 +15,7 @@ defineProps<{
     <p>An error has occurred. Try again?</p>
     <button @click="request.doRequest()">Retry</button>
   </div>
-  <div v-else-if="request.data.value">
+  <div v-show="request.data.value">
     <slot></slot>
   </div>
 </template>
