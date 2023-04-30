@@ -61,5 +61,10 @@ export function createBackendResources(scope: Construct, props: cdk.StackProps) 
 
   const api = new RestApi(scope, 'data-api');
   const lambdaIntegration = new LambdaIntegration(getLiveGenerationLambda);
-  api.root.addMethod('GET', lambdaIntegration);
+
+  const generationResource = api.root.addResource("generation");
+  const liveGenerationResource = generationResource.addResource("live");
+  liveGenerationResource.addCorsPreflight({ allowOrigins: ['*'] })
+
+  liveGenerationResource.addMethod('GET', lambdaIntegration);
 }
