@@ -13,7 +13,7 @@ defineProps<{
   </div>
   <div v-else-if="request.error.value">
     <p>An error has occurred. Try again?</p>
-    <button @click="request.doRequest">Retry</button>
+    <button @click="request.doRequest()">Retry</button>
   </div>
   <div v-else-if="request.data.value">
     <slot></slot>

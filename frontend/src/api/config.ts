@@ -3,13 +3,13 @@ import { ref, type Ref } from "vue";
 export const baseUrl = 'https://zkqqz25fm1.execute-api.eu-west-2.amazonaws.com/prod';
 
 export type ApiRequest<d = any> = {
-  data: Ref<d>
+  data: Ref<d | undefined>
   loading: Ref<boolean>
   error: Ref<boolean>
   doRequest: () => Promise<void>
 }
 
-export function useRequest<d = any>(request: Promise<Response>): ApiRequest {
+export function useRequest<d = any>(request: () => Promise<Response>): ApiRequest<d> {
   const data = ref<d>();
   const loading = ref(false);
   const error = ref(false);
@@ -20,19 +20,20 @@ export function useRequest<d = any>(request: Promise<Response>): ApiRequest {
     error.value = false;
 
     try {
-      const res = await request;
+      const res = await request();
 
       loading.value = false;
 
       if (!res.ok) {
-        error.value = true
+        error.value = true;
         return;
       }
 
       data.value = await res.json() as d;
 
     } catch (err) {
-      error.value = true
+      console.error(err);
+      error.value = true;
     }
   }
 

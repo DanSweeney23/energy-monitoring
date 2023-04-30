@@ -4,7 +4,7 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <template>
   <div class="container">
-    <header class="grid-item header-row">
+    <header class="header-row">
       <h1>UK Energy grid</h1>
 
       <nav>
@@ -18,17 +18,18 @@ import { RouterLink, RouterView } from 'vue-router'
   </div>
 </template>
 
-<style scoped>
+<style>
 .container {
   display: grid;
   grid-template-columns: 20% 20% 20% 20% 20%;
 }
 
-.grid-item {
+.container > * {
   background-color: #333;
   color: #fff;
   border-radius: 5px;
   padding: 10px;
+  margin: 10px;
 }
 
 .header-row {
