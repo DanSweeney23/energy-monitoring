@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue';
-import { useLiveGenerationRequest } from './LiveGeneration/composables';
+import { useLiveGenerationRequest } from './composables';
 import RequestLoader from '@/components/RequestLoader.vue';
-import { FuelType, transformFuelsData, type FuelValue } from './LiveGeneration/models';
+import { FuelType, transformFuelsData, type FuelValue } from './models';
 
 import { Root, Color } from "@amcharts/amcharts5";
 import { PieChart, PieSeries } from "@amcharts/amcharts5/percent";
@@ -28,7 +28,7 @@ const sortedFuelTypes = computed(() => [
   { name: "Renewables", value: totalRenewables.value, color: "#6dd158" },
   { name: "Other Low Carbon", value: totalLC.value, color: "#68989b" },
   { name: "Imports", value: totalImports.value, color: "#999" }
-])
+].sort((x, y) => x.value < y.value ? 1 : 0))
 
 const totalDomestic = computed(() => totalFossils.value + totalRenewables.value + totalLC.value + totalUnknown.value);
 const domesticFuels = computed(() => fuelsData.value.filter(item => item.type != FuelType.Interconnection && item.value != 0));

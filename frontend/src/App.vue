@@ -10,6 +10,8 @@ import { RouterLink, RouterView } from 'vue-router'
       <nav>
         <RouterLink to="/livegeneration">Live Generation</RouterLink>
         <RouterLink to="/historicgeneration">Historic Generation</RouterLink>
+        <RouterLink to="/demandforecast">Demand Forecast</RouterLink>
+        <RouterLink to="/windforecast">Wind Forecast</RouterLink>
       </nav>
     </header>
 
