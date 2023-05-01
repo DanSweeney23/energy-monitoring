@@ -3,11 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "vite",
-    "build": "run-p type-check build-only",
+    "dev": "vite --mode staging",
     "preview": "vite preview",
     "test:unit": "vitest",
-    "build-only": "vite build",
+    "build-staging": "run-p type-check build-only-staging",
+    "build-production": "run-p type-check build-only-production",
+    "build-only-staging": "vite build --mode staging",
+    "build-only-production": "vite build --mode production",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/"
@@ -20,7 +22,7 @@
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.2.0",
     "@types/jsdom": "^21.1.0",
-    "@types/node": "^18.14.2",
+    "@types/node": "^18.16.3",
     "@vitejs/plugin-vue": "^4.0.0",
     "@vue/eslint-config-prettier": "^7.1.0",
     "@vue/eslint-config-typescript": "^11.0.2",

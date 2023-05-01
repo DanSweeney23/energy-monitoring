@@ -1,6 +1,6 @@
 import { ref, type Ref } from "vue";
 
-export const baseUrl = 'https://zkqqz25fm1.execute-api.eu-west-2.amazonaws.com/prod';
+export const baseUrl = import.meta.env.VITE_API_URL;
 
 export type ApiRequest<d = any> = {
   data: Ref<d | undefined>
