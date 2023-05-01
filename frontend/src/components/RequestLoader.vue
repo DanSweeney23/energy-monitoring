@@ -8,7 +8,7 @@ defineProps<{
 </script>
 
 <template>
-  <div v-if="request.loading.value">
+  <div v-if="request.loading.value" class="spinner-wrapper">
     <Spinner />
   </div>
   <div v-else-if="request.error.value">
@@ -19,3 +19,11 @@ defineProps<{
     <slot></slot>
   </div>
 </template>
+
+<style>
+.spinner-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+</style>
