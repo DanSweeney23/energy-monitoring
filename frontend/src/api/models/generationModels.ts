@@ -54,7 +54,7 @@ type Fuel = {
 
 export type FuelValue = Fuel & { value: number, percent: number };
 
-function getFuelType(acronym: string) {
+function getFuelInfo(acronym: string) {
   const fuel: Fuel = {
     acronym,
     name: acronym,
@@ -144,7 +144,7 @@ function getFuelType(acronym: string) {
 
 export function transformFuelsData(rawData: LiveGenerationData): FuelValue[] {
   return rawData.fuels.L.map(item => ({
-    ...getFuelType(item.M.fuelType.S),
+    ...getFuelInfo(item.M.fuelType.S),
     value: parseInt(item.M.value.N),
     percent: parseInt(item.M.percent.N)
   }))

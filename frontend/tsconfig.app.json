@@ -4,6 +4,7 @@
   "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
     "composite": true,
+    "target": "es2020",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
