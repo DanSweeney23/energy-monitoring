@@ -23,11 +23,26 @@ export type LiveGenerationData = {
 };
 
 export enum FuelType {
-  Fossil = 1,
-  Renewable,
-  LowCarbon,
-  Interconnection,
-  Unknown
+  Fossil = "Fossil Fuels",
+  Renewable = "Renewables",
+  LowCarbon = "Other Low Carbon",
+  Interconnection = "Imports",
+  Unknown = "Unknown"
+}
+
+export function getFuelTypeColor(type: FuelType) {
+  switch(type) {
+    case FuelType.Fossil: 
+      return "#ff6a6a";
+    case FuelType.Renewable:
+      return "#6dd158";
+    case FuelType.LowCarbon:
+      return "#68989b";
+    case FuelType.Interconnection:
+      return "#999999";
+    case FuelType.Unknown:
+      return "#ffffff";
+  }
 }
 
 type Fuel = {
@@ -133,4 +148,14 @@ export function transformFuelsData(rawData: LiveGenerationData): FuelValue[] {
     value: parseInt(item.M.value.N),
     percent: parseInt(item.M.percent.N)
   }))
+}
+
+//Helps convert dates & times as stored in dynamo to a regular js Date object
+export function transformDateTime(date: string, time: string) {
+  const paddedDate = ("0" + date.slice(-7)) ?? ''; //Pad leading 0s as they are removed in dynamo ie 1052023 -> 01052023 -> 01/05/2023
+  const paddedTime = (("00000000" + time).slice(-6)) ?? '';
+  const rawDateTime = paddedDate + paddedTime;
+
+  const dashedDateTime = rawDateTime.replace(/(\d{2})(\d{2})(\d{4})(\d{2})(\d{2})(\d{2})/, "$3-$2-$1T$4:$5:$6Z");
+  return new Date(dashedDateTime)
 }

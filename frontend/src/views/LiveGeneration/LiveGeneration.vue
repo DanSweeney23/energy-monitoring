@@ -2,19 +2,14 @@
 import { computed, watch } from 'vue';
 import { useLiveGenerationRequest } from './composables';
 import RequestLoader from '@/components/RequestLoader.vue';
-import { FuelType, transformFuelsData, type FuelValue } from './models';
+import { FuelType, transformFuelsData, getFuelTypeColor, type FuelValue, transformDateTime } from '@/api/models/generationModels';
 
 import { Root, Color } from "@amcharts/amcharts5";
 import { PieChart, PieSeries } from "@amcharts/amcharts5/percent";
 
 const liveGenerationRequest = useLiveGenerationRequest(true);
 
-const paddedDate = computed(() => ("0" + liveGenerationRequest.data.value?.date.N.slice(-7)) ?? ''); //Pad leading 0s as they are removed in dynamo ie 1052023 -> 01052023 -> 01/05/2023
-const paddedTime = computed(() => ("0" + liveGenerationRequest.data.value?.time.N.slice(-7)) ?? '');
-const rawDateTime = computed(() => paddedDate.value + paddedTime.value);
-const dashedDateTime = computed(() => rawDateTime.value?.replace(/(\d{2})(\d{2})(\d{4})(\d{2})(\d{2})(\d{2})/, "$3-$2-$1T$4:$5:$6Z"));
-const liveTime = computed(() => new Date(dashedDateTime.value));
-
+const liveTime = computed(() => liveGenerationRequest.data.value ? transformDateTime(liveGenerationRequest.data.value?.date.N, liveGenerationRequest.data.value?.time.N) : new Date());
 const fuelsData = computed(() => liveGenerationRequest.data.value ? transformFuelsData(liveGenerationRequest.data.value!) : [])
 
 const calculateFuelGeneration = (fuels: FuelValue[], type: FuelType) => fuels.filter(item => item.type == type).map(item => item.value).reduce((acc, curr) => acc + curr, 0);
@@ -26,10 +21,10 @@ const totalImports = computed(() => calculateFuelGeneration(fuelsData.value, Fue
 const totalUnknown = computed(() => calculateFuelGeneration(fuelsData.value, FuelType.Unknown));
 
 const sortedFuelTypes = computed(() => [
-  { name: "Fossil Fuels", value: totalFossils.value, color: "#ff6a6a" },
-  { name: "Renewables", value: totalRenewables.value, color: "#6dd158" },
-  { name: "Other Low Carbon", value: totalLC.value, color: "#68989b" },
-  { name: "Imports", value: totalImports.value, color: "#999" }
+  { name: FuelType.Fossil, value: totalFossils.value, color: getFuelTypeColor(FuelType.Fossil) },
+  { name: FuelType.Renewable, value: totalRenewables.value, color: getFuelTypeColor(FuelType.Renewable) },
+  { name: FuelType.LowCarbon, value: totalLC.value, color: getFuelTypeColor(FuelType.LowCarbon) },
+  { name: FuelType.Interconnection, value: totalImports.value, color: getFuelTypeColor(FuelType.Interconnection) }
 ].sort((x, y) => x.value < y.value ? 1 : 0))
 
 const totalDomestic = computed(() => totalFossils.value + totalRenewables.value + totalLC.value + totalUnknown.value);
@@ -59,8 +54,8 @@ watch(sortedDomesticFuels, () => {
 
 watch(sortedFuelTypes, () => {
   const chartRoot = Root.new("fuels-type-chart");
-
   const chart = chartRoot.container.children.push(PieChart.new(chartRoot, {}));
+
   const series = chart.series.push(
     PieSeries.new(chartRoot, {
       valueField: "value",
@@ -103,9 +98,9 @@ watch(sortedFuelTypes, () => {
     </RequestLoader>
   </div>
   <div class="live-generation-2">
-    <h2>Domestic Generation By Fuel Type</h2>
+    <h2>Domestic Generation By Fuel</h2>
     <RequestLoader :request="liveGenerationRequest">
-      <div style="display:grid; grid-template-columns:50% 50%;align-items: center;">
+      <div class="live-chart-and-table-wrapper">
         <div id="gen-by-fuel-chart"></div>
         <div id="gen-by-fuel-table">
           <table>
@@ -119,9 +114,9 @@ watch(sortedFuelTypes, () => {
     </RequestLoader>
   </div>
   <div class="live-generation-3">
-    <h2>Fuel types</h2>
+    <h2>Domestic Generation By Type</h2>
     <RequestLoader :request="liveGenerationRequest">
-      <div style="display:grid; grid-template-columns:50% 50%;align-items: center;">
+      <div class="live-chart-and-table-wrapper">
         <div id="fuels-type-chart"></div>
         <div id="fuels-type-table">
           <table>
@@ -149,7 +144,7 @@ watch(sortedFuelTypes, () => {
 
 <style>
 .live-generation-1 {
-  grid-column: 1 / 3;
+  grid-column: 1 / 5;
 }
 
 .live-generation-1 ul li {
@@ -157,15 +152,15 @@ watch(sortedFuelTypes, () => {
 }
 
 .live-generation-2 {
-  grid-column: 3 / 6;
+  grid-column: 5 / 11;
 }
 
 .live-generation-3 {
-  grid-column: 1 / 4;
+  grid-column: 1 / 7;
 }
 
 .live-generation-4 {
-  grid-column: 4 / 6;
+  grid-column: 7 / 11;
 }
 
 #gen-by-fuel-table {
@@ -175,11 +170,30 @@ watch(sortedFuelTypes, () => {
 
 #gen-by-fuel-chart {
   width: 100%;
-  height: 300px;
+  height: 400px;
 }
 
 #fuels-type-chart {
   width: 100%;
-  height: 300px;
+  height: 400px;
+}
+
+.live-chart-and-table-wrapper {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  align-items: center
+}
+
+@media screen and (max-width: 768px) {
+  .live-chart-and-table-wrapper {
+    display: inherit;
+  }
+
+
+  .live-chart-and-table-wrapper table {
+    width: 100%;
+    margin: auto;
+    table-layout: auto;
+  }
 }
 </style>

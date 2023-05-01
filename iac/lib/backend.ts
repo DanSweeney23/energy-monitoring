@@ -38,7 +38,6 @@ export function createBackendResources(scope: Construct, props: cdk.StackProps) 
   putLiveGenerationLambda.addToRolePolicy(getElexonKeyPolicy);
   putLiveGenerationLambda.addToRolePolicy(writeToGenerationTablePolicy);
 
-
   new events.Rule(scope, 'five-minute-schedule-rule',
     {
       targets: [
@@ -48,23 +47,33 @@ export function createBackendResources(scope: Construct, props: cdk.StackProps) 
     }
   );
 
-  //Api gateway & get live generation lambda
-  const getLiveGenerationLambda = newLambda('get-live-generation');
-  getLiveGenerationLambda.addEnvironment("GENERATION_TABLE_NAME", generationTable.tableName);
+  //Api gateway
+  const api = new RestApi(scope, 'data-api');
+  const generationResource = api.root.addResource("generation");
+  const allowOrigins = ['*'];
 
   const readFromGenerationTablePolicy = new iam.PolicyStatement({
     actions: ['dynamodb:Query'],
     resources: [generationTable.tableArn]
   });
 
+  //Get live generation lambda
+  const getLiveGenerationLambda = newLambda('get-live-generation');
+  getLiveGenerationLambda.addEnvironment("GENERATION_TABLE_NAME", generationTable.tableName);
   getLiveGenerationLambda.addToRolePolicy(readFromGenerationTablePolicy);
 
-  const api = new RestApi(scope, 'data-api');
-  const lambdaIntegration = new LambdaIntegration(getLiveGenerationLambda);
-
-  const generationResource = api.root.addResource("generation");
+  const liveGenerationIntegration = new LambdaIntegration(getLiveGenerationLambda);
   const liveGenerationResource = generationResource.addResource("live");
-  liveGenerationResource.addCorsPreflight({ allowOrigins: ['*'] })
+  liveGenerationResource.addCorsPreflight({ allowOrigins })
+  liveGenerationResource.addMethod('GET', liveGenerationIntegration);
 
-  liveGenerationResource.addMethod('GET', lambdaIntegration);
+  //Get daily generation lambda
+  const getDailyGenerationLambda = newLambda('get-daily-generation');
+  getDailyGenerationLambda.addEnvironment("GENERATION_TABLE_NAME", generationTable.tableName);
+  getDailyGenerationLambda.addToRolePolicy(readFromGenerationTablePolicy);
+
+  const dailyGenerationIntegration = new LambdaIntegration(getDailyGenerationLambda);
+  const dailyGenerationResource = generationResource.addResource("daily");
+  dailyGenerationResource.addCorsPreflight({ allowOrigins })
+  dailyGenerationResource.addMethod('GET', dailyGenerationIntegration);
 }

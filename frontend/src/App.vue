@@ -5,11 +5,11 @@ import { RouterLink, RouterView } from 'vue-router'
 <template>
   <div class="container">
     <header class="header-row">
-      <h1>UK Energy grid</h1>
+      <h1>UK Energy Grid</h1>
 
       <nav>
-        <RouterLink to="/livegeneration">Live Generation</RouterLink>
-        <RouterLink to="/historicgeneration">Historic Generation</RouterLink>
+        <RouterLink to="/">Live Generation</RouterLink>
+        <RouterLink to="/dailygeneration">Daily Generation</RouterLink>
         <RouterLink to="/demandforecast">Demand Forecast</RouterLink>
         <RouterLink to="/windforecast">Wind Forecast</RouterLink>
       </nav>
@@ -24,7 +24,7 @@ import { RouterLink, RouterView } from 'vue-router'
 .container {
   display: grid;
   gap: 10px;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(10, 1fr);
 }
 
 @media screen and (max-width: 768px) {
@@ -32,8 +32,12 @@ import { RouterLink, RouterView } from 'vue-router'
     display: inherit;
   }
 
-  .container > * {
+  .container>* {
     margin-bottom: 10px;
+  }
+
+  nav > * {
+    display: block;
   }
 }
 
@@ -53,7 +57,7 @@ import { RouterLink, RouterView } from 'vue-router'
   background-color: var(--blue-4);
   color: color;
   text-align: center;
-  grid-column: 1 / 6;
+  grid-column: 1 / 11;
   grid-row: 1;
 }
 
