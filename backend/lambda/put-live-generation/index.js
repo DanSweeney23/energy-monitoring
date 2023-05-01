@@ -2,7 +2,7 @@ const AWS = require('aws-sdk')
 const xml2js = require('xml2js');
 const axios = require('axios');
 
-const makeDateString = (timestamp) => `${timestamp.getUTCDate()}${(timestamp.getUTCMonth()+1).toString().padStart(2, '0')}${timestamp.getUTCFullYear().toString().padStart(2, '0')}`;
+const makeDateString = (timestamp) => `${timestamp.getUTCDate().toString().padStart(2, '0')}${(timestamp.getUTCMonth()+1).toString().padStart(2, '0')}${timestamp.getUTCFullYear().toString().padStart(2, '0')}`;
 const makeTimeString = (timestamp) => `${timestamp.getUTCHours().toString().padStart(2, '0')}${timestamp.getUTCMinutes().toString().padStart(2, '0')}${timestamp.getUTCSeconds().toString().padStart(2, '0')}`;
 
 exports.handler = async function (event) {

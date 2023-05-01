@@ -9,8 +9,10 @@ import { PieChart, PieSeries } from "@amcharts/amcharts5/percent";
 
 const liveGenerationRequest = useLiveGenerationRequest(true);
 
-const rawDateTime = computed(() => (liveGenerationRequest.data.value?.date.N || '') + (liveGenerationRequest.data.value?.time.N || ''))
-const dashedDateTime = computed(() => rawDateTime.value?.replace(/(\d{2})(\d{2})(\d{4})(\d{2})(\d{2})(\d{2})/, "$3-$2-$1T$4:$5:$6Z"))
+const paddedDate = computed(() => ("0" + liveGenerationRequest.data.value?.date.N.slice(-7)) ?? ''); //Pad leading 0s as they are removed in dynamo ie 1052023 -> 01052023 -> 01/05/2023
+const paddedTime = computed(() => ("0" + liveGenerationRequest.data.value?.time.N.slice(-7)) ?? '');
+const rawDateTime = computed(() => paddedDate.value + paddedTime.value);
+const dashedDateTime = computed(() => rawDateTime.value?.replace(/(\d{2})(\d{2})(\d{4})(\d{2})(\d{2})(\d{2})/, "$3-$2-$1T$4:$5:$6Z"));
 const liveTime = computed(() => new Date(dashedDateTime.value));
 
 const fuelsData = computed(() => liveGenerationRequest.data.value ? transformFuelsData(liveGenerationRequest.data.value!) : [])

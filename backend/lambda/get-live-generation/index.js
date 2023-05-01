@@ -17,8 +17,7 @@ exports.handler = async function (event) {
       }
     },
     ExpressionAttributeNames: {
-      "#date": "date",
-      "#time": "time"
+      "#date": "date"
     }
   }
 
