@@ -16,5 +16,14 @@ exports.handler = async function () {
     Key: fileKey
   }).promise();
 
-  return latestForecast;
+  const response = {
+    statusCode: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Content-Type": "text/csv"
+    },
+    body: latestForecast.Body.toString('utf-8')
+  };
+
+  return response;
 }
