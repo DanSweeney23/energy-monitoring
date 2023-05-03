@@ -33,6 +33,12 @@ export function createBackendResources(scope: Construct, props: cdk.StackProps) 
     actions: ['dynamodb:Query'],
     resources: [generationTable.tableArn]
   });
+  
+  //Api gateway
+  const api = new RestApi(scope, 'data-api');
+  const generationResource = api.root.addResource("generation");
+  const demandForecastResource = api.root.addResource("demandforecast");
+  const allowOrigins = ['*'];
 
   //Put live generation lambda 
   const putLiveGenerationLambda = newLambda('put-live-generation', Duration.seconds(10));
@@ -49,11 +55,6 @@ export function createBackendResources(scope: Construct, props: cdk.StackProps) 
       schedule: events.Schedule.rate(Duration.minutes(5)),
     }
   );
-
-  //Api gateway
-  const api = new RestApi(scope, 'data-api');
-  const generationResource = api.root.addResource("generation");
-  const allowOrigins = ['*'];
 
   //Get live generation lambda
   const getLiveGenerationLambda = newLambda('get-live-generation');
@@ -79,19 +80,31 @@ export function createBackendResources(scope: Construct, props: cdk.StackProps) 
   const dataStorageBucket = new s3.Bucket(scope, 'data-storage-bucket');
   
   const writeToDataBucketPolicy = new iam.PolicyStatement({
-    actions: ['s3:PutObject', 's3:PutObjectAcl'],
+    actions: ['s3:PutObject'],
     resources: [dataStorageBucket.bucketArn, `${dataStorageBucket.bucketArn}/*`]
   });
 
-  const putForecastLambda = newLambda('put-demand-forecast', Duration.seconds(10));
-  putForecastLambda.addEnvironment("DATA_BUCKET_NAME", dataStorageBucket.bucketName);
+  const getFromDataBucketPolicy = new iam.PolicyStatement({
+    actions: ['s3:GetObject'],
+    resources: [dataStorageBucket.bucketArn, `${dataStorageBucket.bucketArn}/*`]
+  });
 
-  putForecastLambda.addToRolePolicy(writeToDataBucketPolicy);
+  //Put demand forecast lambda
+  const lastDemandForecastFullAccessPolicy = new iam.PolicyStatement({
+    actions: ['ssm:*'],
+    resources: [`arn:aws:ssm:*:*:parameter/demandforecast/latest`],
+  });
+
+  const putDemandForecastLambda = newLambda('put-demand-forecast', Duration.seconds(20));
+  putDemandForecastLambda.addEnvironment("DATA_BUCKET_NAME", dataStorageBucket.bucketName);
+
+  putDemandForecastLambda.addToRolePolicy(writeToDataBucketPolicy);
+  putDemandForecastLambda.addToRolePolicy(lastDemandForecastFullAccessPolicy);
 
   new events.Rule(scope, 'daily-schedule-rule',
     {
       targets: [
-        new events_targets.LambdaFunction(putForecastLambda),
+        new events_targets.LambdaFunction(putDemandForecastLambda),
       ],
       schedule: events.Schedule.cron({
         hour: "0",
@@ -99,4 +112,17 @@ export function createBackendResources(scope: Construct, props: cdk.StackProps) 
       }),
     }
   );
+
+  //Get demand forecast lambda
+  const getDemandForecastLambda = newLambda('get-demand-forecast');
+  getDemandForecastLambda.addEnvironment("DATA_BUCKET_NAME", dataStorageBucket.bucketName);
+
+  getDemandForecastLambda.addToRolePolicy(getFromDataBucketPolicy);
+  getDemandForecastLambda.addToRolePolicy(lastDemandForecastFullAccessPolicy);
+  
+  const getDemandForecastIntegration = new LambdaIntegration(getDemandForecastLambda);
+  const latestDemandForecastResource = demandForecastResource.addResource("latest");
+  latestDemandForecastResource.addCorsPreflight({ allowOrigins })
+  latestDemandForecastResource.addMethod('GET', getDemandForecastIntegration);
+
 }

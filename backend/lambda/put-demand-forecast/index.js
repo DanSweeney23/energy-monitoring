@@ -18,10 +18,26 @@ exports.handler = async function (event) {
 
   const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 
+  const fileKey = `demandforecasts/${makeDateString(new Date())}.csv`;
+
   await s3.putObject({
     Bucket: process.env.DATA_BUCKET_NAME,
-    Key: `demandforecasts/${makeDateString(new Date())}.csv`,
+    Key: fileKey,
     ContentType:'text/csv',
     Body: csvFileResponse.data
   }).promise();
+
+
+  const ssmParams = {
+    Name: "/demandforecast/latest",
+    Value: fileKey,
+    Overwrite: true,
+    Type: "String",
+  };
+
+  const ssmClient = new AWS.SSM({
+    apiVersion: '2014-11-06',
+  });
+
+  await ssmClient.putParameter(ssmParams).promise();
 }
