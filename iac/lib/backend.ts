@@ -14,19 +14,15 @@ export function createBackendResources(scope: Construct, props: cdk.StackProps) 
     timeout
   });
 
-  //Dynamo table 
-  const generationTable = new dynamodb.Table(scope, 'energy-generation', {
-    partitionKey: { name: 'date', type: dynamodb.AttributeType.NUMBER },
-    sortKey: { name: 'time', type: dynamodb.AttributeType.NUMBER }
-  });
-
-  //Put live generation lambda 
-  const putLiveGenerationLambda = newLambda('put-live-generation', Duration.seconds(10));
-  putLiveGenerationLambda.addEnvironment("GENERATION_TABLE_NAME", generationTable.tableName);
-
   const getElexonKeyPolicy = new iam.PolicyStatement({
     actions: ['ssm:GetParameter'],
     resources: [`arn:aws:ssm:*:*:parameter/elexon/apikey`],
+  });
+
+  //Generation dynamo table 
+  const generationTable = new dynamodb.Table(scope, 'energy-generation', {
+    partitionKey: { name: 'date', type: dynamodb.AttributeType.NUMBER },
+    sortKey: { name: 'time', type: dynamodb.AttributeType.NUMBER }
   });
 
   const writeToGenerationTablePolicy = new iam.PolicyStatement({
@@ -34,6 +30,14 @@ export function createBackendResources(scope: Construct, props: cdk.StackProps) 
     resources: [generationTable.tableArn]
   });
 
+  const readFromGenerationTablePolicy = new iam.PolicyStatement({
+    actions: ['dynamodb:Query'],
+    resources: [generationTable.tableArn]
+  });
+
+  //Put live generation lambda 
+  const putLiveGenerationLambda = newLambda('put-live-generation', Duration.seconds(10));
+  putLiveGenerationLambda.addEnvironment("GENERATION_TABLE_NAME", generationTable.tableName);
 
   putLiveGenerationLambda.addToRolePolicy(getElexonKeyPolicy);
   putLiveGenerationLambda.addToRolePolicy(writeToGenerationTablePolicy);
@@ -51,11 +55,6 @@ export function createBackendResources(scope: Construct, props: cdk.StackProps) 
   const api = new RestApi(scope, 'data-api');
   const generationResource = api.root.addResource("generation");
   const allowOrigins = ['*'];
-
-  const readFromGenerationTablePolicy = new iam.PolicyStatement({
-    actions: ['dynamodb:Query'],
-    resources: [generationTable.tableArn]
-  });
 
   //Get live generation lambda
   const getLiveGenerationLambda = newLambda('get-live-generation');
@@ -76,4 +75,33 @@ export function createBackendResources(scope: Construct, props: cdk.StackProps) 
   const dailyGenerationResource = generationResource.addResource("daily");
   dailyGenerationResource.addCorsPreflight({ allowOrigins })
   dailyGenerationResource.addMethod('GET', dailyGenerationIntegration);
+
+  //Demand forecast dynamo table
+  const forecastTable = new dynamodb.Table(scope, 'demand-forecast', {
+    partitionKey: { name: 'datetime', type: dynamodb.AttributeType.NUMBER },
+  });
+
+  const writeToForecastTablePolicy = new iam.PolicyStatement({
+    actions: ['dynamodb:PutItem'],
+    resources: [forecastTable.tableArn]
+  });
+
+  const readFromForecastTablePolicy = new iam.PolicyStatement({
+    actions: ['dynamodb:Query'],
+    resources: [forecastTable.tableArn]
+  });
+
+  const putForecastLambda = newLambda('put-demand-forecast', Duration.seconds(10));
+  putForecastLambda.addEnvironment("FORECAST_TABLE_NAME", forecastTable.tableName);
+
+  putForecastLambda.addToRolePolicy(writeToForecastTablePolicy);
+
+  new events.Rule(scope, 'five-minute-schedule-rule',
+    {
+      targets: [
+        new events_targets.LambdaFunction(putForecastLambda),
+      ],
+      schedule: events.Schedule.rate(Duration.minutes(5)),
+    }
+  );
 }
