@@ -1,8 +1,7 @@
 import { Construct } from 'constructs';
 import * as cdk from 'aws-cdk-lib';
-import { aws_lambda as lambda, aws_iam as iam, Duration, aws_dynamodb as dynamodb, aws_events as events, aws_events_targets as events_targets, aws_apigateway as apigateway } from 'aws-cdk-lib';
+import { aws_lambda as lambda, aws_iam as iam, Duration, aws_dynamodb as dynamodb, aws_events as events, aws_events_targets as events_targets, aws_s3 as s3 } from 'aws-cdk-lib';
 import { LambdaIntegration, RestApi } from 'aws-cdk-lib/aws-apigateway';
-import { AttributeType, ProjectionType } from 'aws-cdk-lib/aws-dynamodb';
 
 
 export function createBackendResources(scope: Construct, props: cdk.StackProps) {
@@ -76,32 +75,28 @@ export function createBackendResources(scope: Construct, props: cdk.StackProps) 
   dailyGenerationResource.addCorsPreflight({ allowOrigins })
   dailyGenerationResource.addMethod('GET', dailyGenerationIntegration);
 
-  //Demand forecast dynamo table
-  const forecastTable = new dynamodb.Table(scope, 'demand-forecast', {
-    partitionKey: { name: 'datetime', type: dynamodb.AttributeType.NUMBER },
-  });
-
-  const writeToForecastTablePolicy = new iam.PolicyStatement({
-    actions: ['dynamodb:PutItem'],
-    resources: [forecastTable.tableArn]
-  });
-
-  const readFromForecastTablePolicy = new iam.PolicyStatement({
-    actions: ['dynamodb:Query'],
-    resources: [forecastTable.tableArn]
+  //Data storage bucket
+  const dataStorageBucket = new s3.Bucket(scope, 'data-storage-bucket');
+  
+  const writeToDataBucketPolicy = new iam.PolicyStatement({
+    actions: ['s3:PutObject', 's3:PutObjectAcl'],
+    resources: [dataStorageBucket.bucketArn]
   });
 
   const putForecastLambda = newLambda('put-demand-forecast', Duration.seconds(10));
-  putForecastLambda.addEnvironment("FORECAST_TABLE_NAME", forecastTable.tableName);
+  putForecastLambda.addEnvironment("DATA_BUCKET_NAME", dataStorageBucket.bucketName);
 
-  putForecastLambda.addToRolePolicy(writeToForecastTablePolicy);
+  putForecastLambda.addToRolePolicy(writeToDataBucketPolicy);
 
-  new events.Rule(scope, 'five-minute-schedule-rule',
+  new events.Rule(scope, 'daily-schedule-rule',
     {
       targets: [
         new events_targets.LambdaFunction(putForecastLambda),
       ],
-      schedule: events.Schedule.rate(Duration.minutes(5)),
+      schedule: events.Schedule.cron({
+        hour: "0",
+        minute: "1"
+      }),
     }
   );
 }

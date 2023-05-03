@@ -19,9 +19,7 @@ exports.handler = async function (event) {
   const apiKey = apiKeyParam.Parameter.Value;
 
   const elexonResponse = await axios.get(`https://downloads.elexonportal.co.uk/fuel/download/latest?key=${apiKey}`);
-
   const parsedResponse = await parser.parseStringPromise(elexonResponse.data);
-
 
   const ddb = new AWS.DynamoDB({ apiVersion: '2012-08-10' });
 
@@ -45,6 +43,7 @@ exports.handler = async function (event) {
       }
     }
   };
+  
 
   await ddb.putItem(params).promise();
 }
