@@ -9,7 +9,10 @@ export type ApiRequest<d = any> = {
   doRequest: () => Promise<void>
 }
 
-export function useRequest<d = any>(request: () => Promise<Response>): ApiRequest<d> {
+type ResolveFn<d> = (res: Response) => Promise<d>;
+function defaultResolver<d>(res: Response): Promise<d> { return res.json() as Promise<d> };
+
+export function useRequest<d = any>(request: () => Promise<Response>, resolve: ResolveFn<d> = defaultResolver<d>): ApiRequest<d> {
   const data = ref<d>();
   const loading = ref(false);
   const error = ref(false);
@@ -29,7 +32,7 @@ export function useRequest<d = any>(request: () => Promise<Response>): ApiReques
         return;
       }
 
-      data.value = await res.json() as d;
+      data.value = await resolve(res);
 
     } catch (err) {
       console.error(err);
