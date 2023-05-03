@@ -24,7 +24,7 @@ exports.handler = async function (event) {
     Bucket: process.env.DATA_BUCKET_NAME,
     Key: fileKey,
     ContentType:'text/csv',
-    Body: csvFileResponse.data
+    Body: csvFileResponse.data.replace(/"/g, '')
   }).promise();
 
 
