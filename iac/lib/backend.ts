@@ -80,7 +80,7 @@ export function createBackendResources(scope: Construct, props: cdk.StackProps) 
   
   const writeToDataBucketPolicy = new iam.PolicyStatement({
     actions: ['s3:PutObject', 's3:PutObjectAcl'],
-    resources: [dataStorageBucket.bucketArn]
+    resources: [dataStorageBucket.bucketArn, `${dataStorageBucket.bucketArn}/*`]
   });
 
   const putForecastLambda = newLambda('put-demand-forecast', Duration.seconds(10));
