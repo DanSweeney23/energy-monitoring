@@ -59,6 +59,7 @@ import { RouterLink, RouterView } from 'vue-router'
   text-align: center;
   grid-column: 1 / 11;
   grid-row: 1;
+  padding: 1rem;
 }
 
 h1 {
