@@ -1,8 +1,8 @@
-import type { Forecast } from "@/api/models/forecastModels";
+import type { Demand } from "@/api/models/demandForecastModels";
 import { Root, Color, Tooltip } from "@amcharts/amcharts5";
 import { XYChart, LineSeries, DateAxis, ValueAxis, AxisRendererX, AxisRendererY, XYCursor } from "@amcharts/amcharts5/xy";
 
-export function makeDemandGraph(chartId: string, data: Forecast[]) {
+export function makeDemandGraph(chartId: string, data: Demand[], seriesColor: string = '#d13615') {
   const chartRoot = Root.new(chartId);
   const chart = chartRoot.container.children.push(XYChart.new(chartRoot, {
     maxTooltipDistance: 1000,
@@ -28,7 +28,7 @@ export function makeDemandGraph(chartId: string, data: Forecast[]) {
   yAxis.get("renderer").grid.template.adapters.add("stroke", () => Color.fromString("#ffffff"))
 
 
-  const color = Color.fromString('#ff6a6a');
+  const color = Color.fromString(seriesColor);
 
   const series = chart.series.push(LineSeries.new(chartRoot, {
     name: "Demand",

@@ -2,14 +2,14 @@
 import { computed, watch } from 'vue';
 import { useLiveGenerationRequest } from '@/api/requests';
 import RequestLoader from '@/components/RequestLoader.vue';
-import { FuelType, transformFuelsData, getFuelTypeColor, type FuelValue, transformDateTime } from '@/api/models/generationModels';
+import { FuelType, transformFuelsData, getFuelTypeColor, type FuelValue, convertDateTime } from '@/api/models/generationModels';
 
 import { Root, Color } from "@amcharts/amcharts5";
 import { PieChart, PieSeries } from "@amcharts/amcharts5/percent";
 
 const liveGenerationRequest = useLiveGenerationRequest(true);
 
-const liveTime = computed(() => liveGenerationRequest.data.value ? transformDateTime(liveGenerationRequest.data.value?.date.N, liveGenerationRequest.data.value?.time.N) : new Date());
+const liveTime = computed(() => liveGenerationRequest.data.value ? convertDateTime(liveGenerationRequest.data.value?.date.N, liveGenerationRequest.data.value?.time.N) : new Date());
 const fuelsData = computed(() => liveGenerationRequest.data.value ? transformFuelsData(liveGenerationRequest.data.value!) : [])
 
 const calculateFuelGeneration = (fuels: FuelValue[], type: FuelType) => fuels.filter(item => item.type == type).map(item => item.value).reduce((acc, curr) => acc + curr, 0);

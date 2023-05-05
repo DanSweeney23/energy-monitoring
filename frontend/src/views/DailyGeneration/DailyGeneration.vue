@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, watch, type ComputedRef } from 'vue';
 import { useDailyGenerationRequest } from '@/api/requests';
-import { transformDateTime, transformFuelsData, FuelType, getFuelTypeColor } from '@/api/models/generationModels';
+import { convertDateTime, transformFuelsData, FuelType, getFuelTypeColor } from '@/api/models/generationModels';
 import type { FuelValue } from "@/api/models/generationModels";
 import RequestLoader from "@/components/RequestLoader.vue";
 import { Root, Color, Tooltip } from "@amcharts/amcharts5";
@@ -10,7 +10,7 @@ import { XYChart, LineSeries, DateAxis, ValueAxis, AxisRendererX, AxisRendererY,
 const dailyGenerationRequest = useDailyGenerationRequest(true);
 
 const fuelsData = computed(() => dailyGenerationRequest.data.value?.length ?
-  dailyGenerationRequest.data.value.map(item => ({ fuels: transformFuelsData(item), time: transformDateTime(item.date.N, item.time.N) }))
+  dailyGenerationRequest.data.value.map(item => ({ fuels: transformFuelsData(item), time: convertDateTime(item.date.N, item.time.N) }))
   : []);
 
 type FuelTimeSeries = { [key: string]: (FuelValue & { time: number, timeStr: string })[] };

@@ -1,4 +1,4 @@
-export type Forecast = {
+export type Demand = {
   date: Date,
   timestamp: number,
   timeStr: string,
@@ -6,7 +6,7 @@ export type Forecast = {
 };
 
 //Convert forecast csv into json
-export function parseForecastResponse(forecastCsv: string): Forecast[] {
+export function parseForecastResponse(forecastCsv: string): Demand[] {
   const rawForecasts = forecastCsv.split('\n').slice(1);
 
   return rawForecasts.map(item => {

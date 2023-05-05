@@ -151,7 +151,7 @@ export function transformFuelsData(rawData: LiveGenerationData): FuelValue[] {
 }
 
 //Helps convert dates & times as stored in dynamo to a regular js Date object
-export function transformDateTime(date: string, time: string) {
+export function convertDateTime(date: string, time: string) {
   const paddedDate = ("0" + date.slice(-7)) ?? ''; //Pad leading 0s as they are removed in dynamo ie 1052023 -> 01052023 -> 01/05/2023
   const paddedTime = (("00000000" + time).slice(-6)) ?? '';
   const rawDateTime = paddedDate + paddedTime;

@@ -38,6 +38,7 @@ export function createBackendResources(scope: Construct, props: cdk.StackProps) 
   const api = new RestApi(scope, 'data-api');
   const generationResource = api.root.addResource("generation");
   const demandForecastResource = api.root.addResource("demandforecast");
+  const carbonIntensityResource = api.root.addResource("carbonintensity");
   const allowOrigins = ['*'];
 
   //Put live generation lambda 
@@ -125,4 +126,30 @@ export function createBackendResources(scope: Construct, props: cdk.StackProps) 
   latestDemandForecastResource.addCorsPreflight({ allowOrigins })
   latestDemandForecastResource.addMethod('GET', getDemandForecastIntegration);
 
+
+  //Put carbon intensity lambda
+  const putCarbonIntensityLambda = newLambda('put-carbon-intensity', Duration.seconds(10));
+  putCarbonIntensityLambda.addEnvironment("DATA_BUCKET_NAME", dataStorageBucket.bucketName);
+
+  putCarbonIntensityLambda.addToRolePolicy(writeToDataBucketPolicy);
+
+  new events.Rule(scope, 'half-hourly-intensity-schedule-rule',
+    {
+      targets: [
+        new events_targets.LambdaFunction(putCarbonIntensityLambda),
+      ],
+      schedule: events.Schedule.rate(Duration.minutes(30)),
+    }
+  );
+
+  //Get carbon intensity lambda
+  const getCarbonIntensityLambda = newLambda('get-carbon-intensity');
+  getCarbonIntensityLambda.addEnvironment("DATA_BUCKET_NAME", dataStorageBucket.bucketName);
+
+  getCarbonIntensityLambda.addToRolePolicy(getFromDataBucketPolicy);
+  
+  const getCarbonIntensityIntegration = new LambdaIntegration(getCarbonIntensityLambda);
+  const latestCarbonIntensityResource = carbonIntensityResource.addResource("latest");
+  latestCarbonIntensityResource.addCorsPreflight({ allowOrigins })
+  latestCarbonIntensityResource.addMethod('GET', getCarbonIntensityIntegration);
 }
