@@ -12,7 +12,6 @@ import { RouterLink, RouterView } from 'vue-router'
         <RouterLink to="/dailygeneration">Daily Generation</RouterLink>
         <RouterLink to="/demand">Grid Demand</RouterLink>
         <RouterLink to="/carbon">Carbon Intensity</RouterLink>
-        <RouterLink to="/windforecast">Wind Forecast</RouterLink>
       </nav>
     </header>
 
@@ -42,14 +41,14 @@ import { RouterLink, RouterView } from 'vue-router'
   }
 }
 
-.container>* {
+.container .grid-box {
   background-color: #333;
   color: #fff;
   border-radius: 5px;
   padding: 10px;
 }
 
-.container>* h2 {
+.grid-box  h2 {
   text-align: center;
   border-bottom: #fff 1px solid;
 }

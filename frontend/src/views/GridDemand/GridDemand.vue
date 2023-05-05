@@ -56,25 +56,25 @@ watch(forecast, () => {
 </script>
 
 <template>
-  <div class="demand-forecast-1">
+  <div class="grid-box demand-forecast-1">
     <h2>Today's demand so far</h2>
     <RequestLoader :request="dailyGenerationRequest">
       <div id="today-demand-chart"></div>
     </RequestLoader>
   </div>
-  <div class="demand-forecast-2">
+  <div class="grid-box demand-forecast-2">
     <h2>Tomorrow's demand forecast</h2>
     <RequestLoader :request="demandForecastRequest">
       <div id="tomorrow-forecast-chart"></div>
     </RequestLoader>
   </div>
-  <div class="demand-forecast-3">
+  <div class="grid-box demand-forecast-3">
     <h2>Next 14 days demand forecast</h2>
     <RequestLoader :request="demandForecastRequest">
       <div id="demand-14-day-forecast-chart"></div>
     </RequestLoader>
   </div>
-  <div class="demand-forecast-4">
+  <div class="grid-box demand-forecast-4">
     <h2>Info</h2>
     <ul>
       <li>The forecast data is taken from the <a target="_blank"

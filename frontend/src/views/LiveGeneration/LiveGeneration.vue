@@ -74,7 +74,7 @@ watch(sortedFuelTypes, () => {
 </script>
 
 <template>
-  <div class="live-generation-1">
+  <div class="grid-box live-generation-1">
     <h2>Stats</h2>
     <RequestLoader :request="liveGenerationRequest">
       <template v-if="liveGenerationRequest.data.value">
@@ -97,7 +97,7 @@ watch(sortedFuelTypes, () => {
       </template>
     </RequestLoader>
   </div>
-  <div class="live-generation-2">
+  <div class="grid-box live-generation-2">
     <h2>Domestic Generation By Fuel</h2>
     <RequestLoader :request="liveGenerationRequest">
       <div class="live-chart-and-table-wrapper">
@@ -113,7 +113,7 @@ watch(sortedFuelTypes, () => {
       </div>
     </RequestLoader>
   </div>
-  <div class="live-generation-3">
+  <div class="grid-box live-generation-3">
     <h2>Domestic Generation By Type</h2>
     <RequestLoader :request="liveGenerationRequest">
       <div class="live-chart-and-table-wrapper">
@@ -129,7 +129,7 @@ watch(sortedFuelTypes, () => {
       </div>
     </RequestLoader>
   </div>
-  <div class="live-generation-4">
+  <div class="grid-box live-generation-4">
     <h2>Info</h2>
     <ul>
       <li>This data is taken from the <a target="_blank"

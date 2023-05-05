@@ -185,13 +185,13 @@ watch(typeTimeSeriesData, () => {
 </script>
 
 <template>
-  <div class="daily-generation-1">
+  <div class="grid-box daily-generation-1">
     <RequestLoader :request="dailyGenerationRequest">
       <h2>Generation today by fuel (MW)</h2>
       <div id="gen-by-fuel-chart-daily"></div>
     </RequestLoader>
   </div>
-  <div class="daily-generation-2">
+  <div class="grid-box daily-generation-2">
     <RequestLoader :request="dailyGenerationRequest">
       <h2>Generation today by type (%)</h2>
       <div id="gen-by-type-chart-daily"></div>

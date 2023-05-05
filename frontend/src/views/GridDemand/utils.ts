@@ -8,12 +8,15 @@ export function makeDemandGraph(chartId: string, data: Demand[], seriesColor: st
     maxTooltipDistance: 1000,
   }));
 
+  const lastTime = data.map(item => item.date).sort()[data.length-1];
+  const graphEndTime = new Date(lastTime.toISOString().split('T')[0] + 'T23:59:59Z')
 
   const xAxis = chart.xAxes.push(DateAxis.new(chartRoot, {
     baseInterval: {
       timeUnit: "minute",
       count: 12
     },
+    max: graphEndTime.getTime(),
     renderer: AxisRendererX.new(chartRoot, {}),
   }));
 

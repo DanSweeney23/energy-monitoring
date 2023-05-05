@@ -25,15 +25,15 @@ const router = createRouter({
       component: GridDemand
     },
     {
+      path: '/carbon',
+      name: 'carbon intensity',
+      component: CarbonIntensity
+    },
+    { //TODO
       path: '/windforecast',
       name: 'wind forecast',
       component: WindForecast
     },
-    {
-      path: '/carbon',
-      name: 'carbon intensity',
-      component: CarbonIntensity
-    }
   ]
 })
 
