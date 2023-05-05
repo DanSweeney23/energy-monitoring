@@ -77,10 +77,13 @@ watch(forecast, () => {
   <div class="demand-forecast-4">
     <h2>Info</h2>
     <ul>
-      <li>This data is taken from the <a target="_blank"
+      <li>The forecast data is taken from the <a target="_blank"
           href="https://data.nationalgrideso.com/demand/2-14-days-ahead-national-demand-forecast">National grid ESO</a>
       </li>
-      <li>The data is used by the industry to make decisions on balancing supply and demand</li>
+      <li>Today's demand data is taken from the <a target="_blank"
+          href="https://www.elexon.co.uk/data/balancing-mechanism-reporting-agent">balancing and reporting mechanism</a>
+      </li>
+      <li>Forecast data is used by the industry to make decisions on balancing supply and demand</li>
     </ul>
   </div>
 </template>
