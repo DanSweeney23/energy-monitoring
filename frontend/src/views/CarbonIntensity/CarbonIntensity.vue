@@ -83,7 +83,7 @@ watch(carbonData, () => {
     <div class="grid-box">
       <h2>Info</h2>
       <ul>
-        <li>This data is from the <a href="https://carbonintensity.org.uk/">carbon intensity API</a> by National Grid,
+        <li>This data is from the <a href="https://carbonintensity.org.uk/" target="_blank">carbon intensity API</a> by National Grid,
           WEF, University of Oxford, and Environmental Defence Fund.</li>
         <li>The data measures carbon emissions from electricty generation only, not other sources of power.</li>
         <li>Unlike other pages on this site, it also includes estimates of solar & onshore wind, as well as imports.</li>

@@ -4,7 +4,7 @@ import { useDailyGenerationRequest } from '@/api/requests';
 import { convertDateTime, transformFuelsData, FuelType, getFuelTypeColor } from '@/api/models/generationModels';
 import type { FuelValue } from "@/api/models/generationModels";
 import RequestLoader from "@/components/RequestLoader.vue";
-import { Root, Color, Tooltip } from "@amcharts/amcharts5";
+import { Root, Color, Tooltip, Legend, p100, p50, Theme } from "@amcharts/amcharts5";
 import { XYChart, LineSeries, DateAxis, ValueAxis, AxisRendererX, AxisRendererY, XYCursor } from "@amcharts/amcharts5/xy";
 
 const dailyGenerationRequest = useDailyGenerationRequest(true);
@@ -64,7 +64,7 @@ const typeTimeSeriesData = computed(() => {
         timeStr: generationInstant.time.toLocaleString('en-GB', {
           hour: 'numeric', hour12: true, minute: 'numeric'
         }),
-        percent: parseFloat(((values[fuelType]/total)*100).toFixed(1))
+        percent: parseFloat(((values[fuelType] / total) * 100).toFixed(1))
       })
     });
   });
@@ -88,16 +88,19 @@ watch(timeSeriesFuels, () => {
   const chartRoot = Root.new("gen-by-fuel-chart-daily");
   const chart = chartRoot.container.children.push(XYChart.new(chartRoot, {
     maxTooltipDistance: 0,
+    layout: chartRoot.verticalLayout
   }));
 
   chart.set("cursor", XYCursor.new(chartRoot, {}));
+
+  const xRenderer = AxisRendererX.new(chartRoot, {});
 
   const xAxis = chart.xAxes.push(DateAxis.new(chartRoot, {
     baseInterval: {
       timeUnit: "minute",
       count: 12
     },
-    renderer: AxisRendererX.new(chartRoot, {}),
+    renderer: xRenderer,
   }));
 
   const yAxis = chart.yAxes.push(ValueAxis.new(chartRoot, {
@@ -126,10 +129,14 @@ watch(timeSeriesFuels, () => {
       }),
     }));
 
+
     series.strokes.template.adapters.add("strokeWidth", () => 3)
 
     series.data.setAll(timeSeriesFuels.value[key]);
   });
+
+  const legend = chart.children.push(Legend.new(chartRoot, {}));
+  legend.data.setAll(chart.series.values);
 });
 
 watch(typeTimeSeriesData, () => {
@@ -138,6 +145,7 @@ watch(typeTimeSeriesData, () => {
   const chartRoot = Root.new("gen-by-type-chart-daily");
   const chart = chartRoot.container.children.push(XYChart.new(chartRoot, {
     maxTooltipDistance: 0,
+    layout: chartRoot.verticalLayout
   }));
 
   chart.set("cursor", XYCursor.new(chartRoot, {}));
@@ -177,9 +185,11 @@ watch(typeTimeSeriesData, () => {
     }));
 
     series.strokes.template.adapters.add("strokeWidth", () => 3)
-
     series.data.setAll(typeTimeSeriesData.value[key]);
   });
+
+  const legend = chart.children.push(Legend.new(chartRoot, {}));
+  legend.data.setAll(chart.series.values);
 });
 
 </script>
@@ -206,7 +216,7 @@ watch(typeTimeSeriesData, () => {
 
 #gen-by-fuel-chart-daily {
   width: 100%;
-  height: 400px;
+  height: 600px;
 }
 
 .daily-generation-2 {
@@ -215,6 +225,6 @@ watch(typeTimeSeriesData, () => {
 
 #gen-by-type-chart-daily {
   width: 100%;
-  height: 400px;
+  height: 535px;
 }
 </style>

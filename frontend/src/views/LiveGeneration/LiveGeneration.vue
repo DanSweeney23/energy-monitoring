@@ -53,6 +53,7 @@ watch(sortedDomesticFuels, () => {
 });
 
 watch(sortedFuelTypes, () => {
+
   const chartRoot = Root.new("fuels-type-chart");
   const chart = chartRoot.container.children.push(PieChart.new(chartRoot, {}));
 
@@ -114,7 +115,7 @@ watch(sortedFuelTypes, () => {
     </RequestLoader>
   </div>
   <div class="grid-box live-generation-3">
-    <h2>Domestic Generation By Type</h2>
+    <h2>Generation By Type</h2>
     <RequestLoader :request="liveGenerationRequest">
       <div class="live-chart-and-table-wrapper">
         <div id="fuels-type-chart"></div>

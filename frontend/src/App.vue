@@ -1,17 +1,25 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView } from 'vue-router';
+
+const navPages = [
+  { to: '/', text: 'Live Generation' },
+  { to: '/dailygeneration', text: 'Daily Generation' },
+  { to: '/demand', text: 'Grid Demand' },
+  { to: '/carbon', text: 'Carbon Intensity' }
+];
 </script>
 
 <template>
   <div class="container">
     <header class="header-row">
       <h1>UK Energy Grid</h1>
+      <p>Monitoring the electricity demand, generation, and carbon emissions of the national grid</p>
 
-      <nav>
-        <RouterLink to="/">Live Generation</RouterLink>
-        <RouterLink to="/dailygeneration">Daily Generation</RouterLink>
-        <RouterLink to="/demand">Grid Demand</RouterLink>
-        <RouterLink to="/carbon">Carbon Intensity</RouterLink>
+      <nav class="app-navigation">
+        <template v-for="(page, i) in navPages" :key="i">
+          <RouterLink :to="page.to">{{ page.text }}</RouterLink>
+          <span v-if="i !== navPages.length-1" class="nav-divider">|</span>
+        </template>
       </nav>
     </header>
 
@@ -36,19 +44,23 @@ import { RouterLink, RouterView } from 'vue-router'
     margin-bottom: 10px;
   }
 
-  nav > * {
+  nav>* {
     display: block;
+  }
+
+  .nav-divider {
+    display: none;
   }
 }
 
 .container .grid-box {
-  background-color: #333;
+  background-color: #383838;
   color: #fff;
   border-radius: 5px;
   padding: 10px;
 }
 
-.grid-box  h2 {
+.grid-box h2 {
   text-align: center;
   border-bottom: #fff 1px solid;
 }
@@ -64,13 +76,14 @@ import { RouterLink, RouterView } from 'vue-router'
 
 h1 {
   font-size: 3rem;
+  color: var(--vt-c-white-soft)
 }
 
-nav {
+nav.app-navigation {
   margin-top: 15px;
 }
 
-nav a {
+nav.app-navigation a {
   color: white;
   background-color: none;
   border-radius: 10px;
@@ -78,8 +91,7 @@ nav a {
   margin: 3px;
 }
 
-nav a.router-link-active {
+nav.app-navigation a.router-link-active {
   background-color: white;
-  color: var(--blue-4)
-}
-</style>
+  color: var(--blue-4);
+}</style>

@@ -37,7 +37,7 @@ const getDaysAhead = (start: Date, days: number) => {
 
 watch(todaysDemand, () => {
   if (!todaysDemand.value) return;
-  makeDemandGraph("today-demand-chart", todaysDemand.value, '#6dd158');
+  makeDemandGraph("today-demand-chart", todaysDemand.value, false, '#6dd158');
 });
 
 watch(forecast, () => {
@@ -50,7 +50,7 @@ watch(forecast, () => {
 
 watch(forecast, () => {
   if (!forecast.value) return;
-  makeDemandGraph("demand-14-day-forecast-chart", forecast.value);
+  makeDemandGraph("demand-14-day-forecast-chart", forecast.value, true);
 });
 
 </script>
