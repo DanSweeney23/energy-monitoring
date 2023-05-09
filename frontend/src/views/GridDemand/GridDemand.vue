@@ -45,7 +45,7 @@ watch(forecast, () => {
   const endDate = getDaysAhead(forecast.value[0].date, 1);
 
   const filteredData = forecast.value.filter(item => item.date <= endDate);
-  makeDemandGraph("tomorrow-forecast-chart", filteredData);
+  makeDemandGraph("tomorrow-forecast-chart", filteredData, true);
 });
 
 watch(forecast, () => {

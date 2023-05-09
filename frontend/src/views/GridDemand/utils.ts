@@ -2,7 +2,7 @@ import type { Demand } from "@/api/models/demandForecastModels";
 import { Root, Color, Tooltip } from "@amcharts/amcharts5";
 import { XYChart, LineSeries, DateAxis, ValueAxis, AxisRendererX, AxisRendererY, XYCursor } from "@amcharts/amcharts5/xy";
 
-export function makeDemandGraph(chartId: string, data: Demand[], trendLine: boolean = false, seriesColor: string = '#d13615') {
+export function makeDemandGraph(chartId: string, data: Demand[], trendLine: boolean, seriesColor: string = '#d13615') {
   const chartRoot = Root.new(chartId);
   const chart = chartRoot.container.children.push(XYChart.new(chartRoot, {
     maxTooltipDistance: 1000,
@@ -51,29 +51,31 @@ export function makeDemandGraph(chartId: string, data: Demand[], trendLine: bool
 
   series.data.setAll(data);
 
-  const trendFn = calculateTrendLineFunction(data.filter(item => !Number.isNaN(item.timestamp)));
+  if (trendLine) {
+    const trendFn = calculateTrendLineFunction(data.filter(item => !Number.isNaN(item.timestamp)));
 
-  const timestamps = data.map(item => item.timestamp).filter(item => !Number.isNaN(item));
+    const timestamps = data.map(item => item.timestamp).filter(item => !Number.isNaN(item));
 
-  const firstTimestamp = Math.min(...timestamps);
-  const lastTimestamp = Math.max(...timestamps);
+    const firstTimestamp = Math.min(...timestamps);
+    const lastTimestamp = Math.max(...timestamps);
 
-  const trendData = [
-    { x: firstTimestamp, y: trendFn(firstTimestamp) },
-    { x: lastTimestamp, y: trendFn(lastTimestamp) }
-  ];
+    const trendData = [
+      { x: firstTimestamp, y: trendFn(firstTimestamp) },
+      { x: lastTimestamp, y: trendFn(lastTimestamp) }
+    ];
 
-  const trendSeries = LineSeries.new(chartRoot, {
-    xAxis: xAxis,
-    yAxis: yAxis,
-    valueXField: "x",
-    stroke: Color.fromString("#fff"),
-    valueYField: "y"
-  });
+    const trendSeries = LineSeries.new(chartRoot, {
+      xAxis: xAxis,
+      yAxis: yAxis,
+      valueXField: "x",
+      stroke: Color.fromString("#fff"),
+      valueYField: "y"
+    });
 
-  trendSeries.data.setAll(trendData);
-  trendSeries.appear(1000, 100);
-  chart.series.push(trendSeries);
+    trendSeries.data.setAll(trendData);
+    trendSeries.appear(1000, 100);
+    chart.series.push(trendSeries);
+  }
 
   chart.set("cursor", XYCursor.new(chartRoot, { snapToSeries: [series] }));
 }
