@@ -96,7 +96,5 @@ function calculateTrendLineFunction(data: Demand[]) {
 
   const yIntercept = meanY - (slope * meanX);
 
-  console.log("sumX", sumX, "sumY", sumY, "meanX", meanX, "meanY", meanY, "deviancies", deviancies, "slope", slope, "yIntercept", yIntercept)
-
   return (xVal: number) => (slope * xVal) + yIntercept;
 }

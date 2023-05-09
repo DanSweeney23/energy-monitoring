@@ -17,7 +17,6 @@ exports.handler = async function (event) {
   const startDate = new Date(endDate.getTime() - (60 * 60 * 24 * 7 * 1000));
 
   const url = `${BASE_URL}/${startDate.toISOString()}/${endDate.toISOString()}`;
-  console.log(url);
 
   const intensityResponse = await axios.get(url);
   const intensityData = intensityResponse.data.data;
