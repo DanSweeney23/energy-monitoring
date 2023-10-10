@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watch, type ComputedRef } from 'vue';
+import { computed, watch } from 'vue';
 import { useDailyGenerationRequest } from '@/api/requests';
 import { convertDateTime, transformFuelsData, FuelType, getFuelTypeColor } from '@/api/models/generationModels';
 import type { FuelValue } from "@/api/models/generationModels";

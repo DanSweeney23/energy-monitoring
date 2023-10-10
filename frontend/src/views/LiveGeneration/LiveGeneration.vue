@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue';
+import { computed, watch, watchEffect } from 'vue';
 import { useLiveGenerationRequest } from '@/api/requests';
 import RequestLoader from '@/components/RequestLoader.vue';
 import { FuelType, transformFuelsData, getFuelTypeColor, type FuelValue, convertDateTime } from '@/api/models/generationModels';

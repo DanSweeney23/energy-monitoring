@@ -31,8 +31,8 @@ export enum FuelType {
 }
 
 export function getFuelTypeColor(type: FuelType) {
-  switch(type) {
-    case FuelType.Fossil: 
+  switch (type) {
+    case FuelType.Fossil:
       return "#ff6a6a";
     case FuelType.Renewable:
       return "#6dd158";
@@ -152,10 +152,12 @@ export function transformFuelsData(rawData: LiveGenerationData): FuelValue[] {
 
 //Helps convert dates & times as stored in dynamo to a regular js Date object
 export function convertDateTime(date: string, time: string) {
-  const paddedDate = ("0" + date.slice(-7)) ?? ''; //Pad leading 0s as they are removed in dynamo ie 1052023 -> 01052023 -> 01/05/2023
-  const paddedTime = (("00000000" + time).slice(-6)) ?? '';
+  const paddedDate = date.padStart(8, "0"); //Pad leading 0s as they are removed in dynamo ie 1052023 -> 01052023 -> 01/05/2023
+  const paddedTime = time.padStart(6, "0");
   const rawDateTime = paddedDate + paddedTime;
 
+  console.log("rdt", rawDateTime)
   const dashedDateTime = rawDateTime.replace(/(\d{2})(\d{2})(\d{4})(\d{2})(\d{2})(\d{2})/, "$3-$2-$1T$4:$5:$6Z");
+  console.log("ddt", dashedDateTime)
   return new Date(dashedDateTime)
 }
